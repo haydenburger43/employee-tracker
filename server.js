@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const db = require("connection.js");
+const db = require("./connection");
 const cTable = require("console.table");
 
 const connection = mysql.createConnection({
@@ -13,8 +13,8 @@ const connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
-  database: "employee",
+  password: "Sonor915$",
+  database: "employees",
 });
 
 connection.connect(function (err) {
@@ -23,10 +23,10 @@ connection.connect(function (err) {
   console.log(`
  employee manager`);
   // runs the app
-  firstPrompt();
+  promptUser();
 });
 
-function prompt() {
+function promptUser() {
   inquirer
     .prompt({
       type: "list",
@@ -73,4 +73,36 @@ function prompt() {
           break;
       }
     });
+
+  function viewEmployee() {
+    const sql = `SELECT *
+                  FROM employee`;
+
+    db.query(sql, (err, results) => {
+      if (err) throw err;
+
+      const transformed = results.reduce((acc, { id, ...x }) => {
+        acc[id] = x;
+        return acc;
+      }, {});
+      console.table(transformed);
+      promptUser();
+    });
+  }
+}
+
+function view() {
+  const sql = `SELECT *
+                FROM employee`;
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    const transformed = results.reduce((acc, { id, ...x }) => {
+      acc[id] = x;
+      return acc;
+    }, {});
+    console.table(transformed);
+    promptUser();
+  });
 }
